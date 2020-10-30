@@ -61,7 +61,20 @@ class GameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let urlString = "/Users/maximsafronov/Documents/Git/Quiz-game/MS-Millionaire/MS-Millionaire/questions.json"
+        guard let url = URL(string: urlString) else { return }
         
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
+            guard let data = data else { return }
+            guard error == nil else { return }
+            
+            do {
+                let question = try JSONDecoder().decode(VariationOfQuestions.self, from: data)
+                print(question)
+            } catch let error {
+                print(error)
+            }
+        }.resume()
         
         for button in answerButtons {
             button.createAnswerButton()
