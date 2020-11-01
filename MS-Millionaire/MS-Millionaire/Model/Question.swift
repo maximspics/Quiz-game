@@ -27,15 +27,15 @@ class Question: Equatable, Codable {
     var money: Int
 }
 
-class QuestionsCategory: Codable {
+class QuestionCategory: Codable {
     
-    internal init(category: [Question]) {
-        self.category = category
+    internal init(questions: [Question]) {
+        self.questions = questions
     }
     
-    var category: [Question]
+    var questions: [Question]
 }
 
-class UserQuestions: QuestionsCategory {
+class UserQuestions: QuestionCategory {
     
 }
