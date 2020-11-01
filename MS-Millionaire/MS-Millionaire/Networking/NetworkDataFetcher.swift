@@ -12,12 +12,12 @@ class NetworkDataFetcher {
     
     let networkService = NetworkService()
     
-    func fetchQuestions(urlString: String, response: @escaping ([QuestionsCategory]?) -> Void) {
+    func fetchQuestions(urlString: String, response: @escaping ([QuestionCategory]?) -> Void) {
         networkService.request(urlString: urlString) { (result) in
             switch result {
             case .success(let data):
                 do {
-                    let questions = try JSONDecoder().decode([QuestionsCategory].self, from: data)
+                    let questions = try JSONDecoder().decode([QuestionCategory].self, from: data)
                     response(questions)
                 } catch let jsonError {
                     print("Failed to decode JSON", jsonError)
