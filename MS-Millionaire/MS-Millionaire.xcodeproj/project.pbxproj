@@ -27,6 +27,8 @@
 		2A684E4723FB396D00A6CFD9 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A684E4623FB396D00A6CFD9 /* GameViewController.swift */; };
 		2A684E4923FB3EBD00A6CFD9 /* ResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A684E4823FB3EBD00A6CFD9 /* ResultsViewController.swift */; };
 		2A684E4D23FBE03400A6CFD9 /* UIButton+UILabel+UIView+UITableViewCell+Extention.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A684E4C23FBE03300A6CFD9 /* UIButton+UILabel+UIView+UITableViewCell+Extention.swift */; };
+		2A871C04254E17D700A1AB8E /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A871C03254E17D700A1AB8E /* NetworkService.swift */; };
+		2A871C08254E184F00A1AB8E /* NetworkDataFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A871C07254E184F00A1AB8E /* NetworkDataFetcher.swift */; };
 		2ADD9BF523FDE1FA0076BDC2 /* GameResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ADD9BF423FDE1FA0076BDC2 /* GameResults.swift */; };
 		2ADD9BF723FDF1180076BDC2 /* CareTaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ADD9BF623FDF1180076BDC2 /* CareTaker.swift */; };
 /* End PBXBuildFile section */
@@ -54,6 +56,8 @@
 		2A684E4623FB396D00A6CFD9 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		2A684E4823FB3EBD00A6CFD9 /* ResultsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsViewController.swift; sourceTree = "<group>"; };
 		2A684E4C23FBE03300A6CFD9 /* UIButton+UILabel+UIView+UITableViewCell+Extention.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+UILabel+UIView+UITableViewCell+Extention.swift"; sourceTree = "<group>"; };
+		2A871C03254E17D700A1AB8E /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
+		2A871C07254E184F00A1AB8E /* NetworkDataFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDataFetcher.swift; sourceTree = "<group>"; };
 		2ADD9BF423FDE1FA0076BDC2 /* GameResults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameResults.swift; sourceTree = "<group>"; };
 		2ADD9BF623FDF1180076BDC2 /* CareTaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareTaker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -101,7 +105,9 @@
 		2A684E2B23FB211300A6CFD9 /* MS-Millionaire */ = {
 			isa = PBXGroup;
 			children = (
+				2A871C02254E17B200A1AB8E /* Networking */,
 				2A684E4123FB215500A6CFD9 /* Petterns */,
+				2A871C0A254F482200A1AB8E /* Model */,
 				2A684E4023FB214C00A6CFD9 /* Game */,
 				2A684E2C23FB211300A6CFD9 /* AppDelegate.swift */,
 				2A684E2E23FB211300A6CFD9 /* SceneDelegate.swift */,
@@ -117,7 +123,6 @@
 		2A684E4023FB214C00A6CFD9 /* Game */ = {
 			isa = PBXGroup;
 			children = (
-				2A684E4423FB2F2600A6CFD9 /* Question.swift */,
 				2A684E4223FB21EE00A6CFD9 /* MainMenuViewController.swift */,
 				2A684E4623FB396D00A6CFD9 /* GameViewController.swift */,
 				2A684E4823FB3EBD00A6CFD9 /* ResultsViewController.swift */,
@@ -137,6 +142,23 @@
 				2A5E2B29240FD510007B558F /* UserQuestionsCaretaker.swift */,
 			);
 			path = Petterns;
+			sourceTree = "<group>";
+		};
+		2A871C02254E17B200A1AB8E /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				2A871C03254E17D700A1AB8E /* NetworkService.swift */,
+				2A871C07254E184F00A1AB8E /* NetworkDataFetcher.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		2A871C0A254F482200A1AB8E /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				2A684E4423FB2F2600A6CFD9 /* Question.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -166,7 +188,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1130;
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1210;
 				ORGANIZATIONNAME = "Maxim Safronov";
 				TargetAttributes = {
 					2A684E2823FB211300A6CFD9 = {
@@ -210,6 +232,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2A871C08254E184F00A1AB8E /* NetworkDataFetcher.swift in Sources */,
 				2ADD9BF523FDE1FA0076BDC2 /* GameResults.swift in Sources */,
 				2A684E4523FB2F2600A6CFD9 /* Question.swift in Sources */,
 				2A6077562405FBE100BFE110 /* Difficulty.swift in Sources */,
@@ -220,6 +243,7 @@
 				2A2EB6332400A20C0087B45F /* RecordCell.swift in Sources */,
 				2A684E2D23FB211300A6CFD9 /* AppDelegate.swift in Sources */,
 				2A684E4723FB396D00A6CFD9 /* GameViewController.swift in Sources */,
+				2A871C04254E17D700A1AB8E /* NetworkService.swift in Sources */,
 				2A6077602407D36600BFE110 /* SequenceQuestionStrategy.swift in Sources */,
 				2A684E4D23FBE03400A6CFD9 /* UIButton+UILabel+UIView+UITableViewCell+Extention.swift in Sources */,
 				2ADD9BF723FDF1180076BDC2 /* CareTaker.swift in Sources */,
@@ -280,6 +304,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -340,6 +365,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;

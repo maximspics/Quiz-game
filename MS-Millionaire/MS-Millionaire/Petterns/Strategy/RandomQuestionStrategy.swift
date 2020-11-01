@@ -9,7 +9,7 @@
 import Foundation
 
 class RandomQuestionStrategy: QuestionStrategy {
-    func shuffleVariationOfQuestions(_ questions: [VariationOfQuestions]) -> [VariationOfQuestions] {
+    func shuffleVariationOfQuestions(_ questions: [QuestionsCategory]) -> [QuestionsCategory] {
         return questions.shuffled()
     }
 }

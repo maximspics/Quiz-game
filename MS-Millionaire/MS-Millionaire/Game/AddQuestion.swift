@@ -59,7 +59,7 @@ class AddQuestionController: UIViewController {
         {
             if moneyTextField.text?.isInt == true {
                 
-                GameResults.shared.userQuestions.append(UserQuestions(questionsInCategory: [Question(question: "Вопрос от пользователя: " + question, answers: [firstAnswer,secondAnswer,thirdAnswer,fourthAnswer],  correctAnswer: (correctAnswerSegmentedControl.selectedSegmentIndex), money: Int(money) ?? 0)]))
+                GameResults.shared.userQuestions.append(UserQuestions(category: [Question(question: "Вопрос от пользователя: " + question, answers: [firstAnswer,secondAnswer,thirdAnswer,fourthAnswer],  correctAnswer: (correctAnswerSegmentedControl.selectedSegmentIndex), money: Int(money) ?? 0)]))
                 
                 print("userQuestions in addQuestionButton: \(GameResults.shared.userQuestions)")
                 
