@@ -30,9 +30,10 @@ class GameViewController: UIViewController {
     var lifelineOdds: LifelineOdds = .medium
     var onGameEnd: ((Int) -> Void)?
     
+    var questions = [QuestionsCategory]()
     var userQuestions = GameResults.shared.userQuestions
     let letters = ["A: ", "B: ", "C: ", "D: "]
-    var categoryIndex = Int()
+    var questionIndex = Int()
     var questionIndexInCategory = Int()
     var correctAnswer = Int()
     
@@ -59,7 +60,7 @@ class GameViewController: UIViewController {
     
     let networkService = NetworkService()
     let networkDataFetcher = NetworkDataFetcher()
-    var questionCategory: [QuestionCategory]? = nil
+    var questionsCategory: [QuestionsCategory]? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,7 +69,7 @@ class GameViewController: UIViewController {
         
         networkDataFetcher.fetchQuestions(urlString: urlString) { (questionResponse) in
             guard let questionResponse = questionResponse else { return }
-            self.questionCategory = questionResponse
+            self.questionsCategory = questionResponse
             print("questionResponse:", questionResponse)
         }
         
@@ -79,9 +80,8 @@ class GameViewController: UIViewController {
         moneyView.createMoneyView()
         questionView.createQuestionView()
         
-        /*
         questions = [
-            Questions(category: [
+            QuestionsCategory(category: [
                 Question(question: "Каким термином определяют троих людей связанных любовными отношениями?",
                          answers: ["Порочный круг",
                                    "Любовный треугольник",
@@ -105,7 +105,7 @@ class GameViewController: UIViewController {
                          money: 100)
                 ]
             ),
-            Questions(category: [
+            QuestionsCategory(category: [
                 Question(question: "Что вылетает из праздничной хлопушки?",
                          answers: ["Брызги",
                                    "Мишура",
@@ -128,7 +128,7 @@ class GameViewController: UIViewController {
                          correctAnswer: 1,
                          money: 200)
             ]),
-            Questions(category: [
+            QuestionsCategory(category: [
                 Question(question: "Как называется экзотическое животное из Южной Америки?",
                          answers: ["Пчеложор",
                                    "Термитоглот",
@@ -137,7 +137,7 @@ class GameViewController: UIViewController {
                          correctAnswer: 2,
                          money: 300)
             ]),
-            Questions(category: [
+            QuestionsCategory(category: [
                 Question(question: "Во что превращается гусеница?",
                          answers: ["В мячик",
                                    "В пирамидку",
@@ -146,7 +146,7 @@ class GameViewController: UIViewController {
                          correctAnswer: 3,
                          money: 400)
             ]),
-            Questions(category: [
+            QuestionsCategory(category: [
                 Question(question: "К какой группе музыкальных инструментов относится валторна?",
                          answers: ["Струнные",
                                    "Клавишные",
@@ -156,7 +156,7 @@ class GameViewController: UIViewController {
                          money: 500
                 )
             ]),
-            Questions(category: [
+            QuestionsCategory(category: [
                 Question(question: "В какой басне Крылова среди действующих лиц есть человек?",
                          answers: ["«Лягушка и Вол»",
                                    "«Свинья под Дубом»",
@@ -167,10 +167,9 @@ class GameViewController: UIViewController {
                 )
             ])
         ]
- */
         
         if userQuestions.count > 0 {
-            questionCategory = questionCategory! + userQuestions
+            questionsCategory = questionsCategory! + userQuestions
         }
         
         var strategy: QuestionStrategy {
@@ -192,13 +191,13 @@ class GameViewController: UIViewController {
         odds = lifelineStrategy.doOdds()
         print("odds in viewDidLoad: \(odds)")
         
-        questionCategory = strategy.shuffleVariationOfQuestions(questionCategory!)
+        questionsCategory = strategy.shuffleVariationOfQuestions(questions)
         loadNewQuestion()
         
     }
     
     func loadNewQuestion() {
-        if categoryIndex < questionCategory!.count {
+        if questionIndex < questionsCategory!.count {
             
             // Return the buttons to their original appearance if a lifelines was taken
             for i in 0..<answerButtons.count {
@@ -216,24 +215,24 @@ class GameViewController: UIViewController {
             // Take the random element in the same money category of question
         //    guard let randomElement = questions[questionIndex].category.randomElement() else { return}
         //    questionIndexInCategory = questions[questionIndex].category.firstIndex(of: randomElement)!
-            let randomElement = questionCategory?[categoryIndex].questions.randomElement()
-            questionIndexInCategory = questionCategory?[categoryIndex].questions.firstIndex(of: randomElement!) ?? 0
+            let randomElement = questionsCategory?[questionIndex].category.randomElement()
+            questionIndexInCategory = questionsCategory?[questionIndex].category.firstIndex(of: randomElement!) ?? 0
             
             // Fill answer buttons with text
             for i in 0..<answerButtons.count {
-                answerButtons[i].setTitle(letters[i] + questionCategory![categoryIndex].questions[questionIndexInCategory].answers[i], for: UIControl.State.normal)
+                answerButtons[i].setTitle(letters[i] + questionsCategory![questionIndex].category[questionIndexInCategory].answers[i], for: UIControl.State.normal)
             }
             
             // Fill question label with text and Display font size to fit width
-            questionLabel.text = questionCategory![categoryIndex].questions[questionIndexInCategory].question
+            questionLabel.text = questionsCategory![questionIndex].category[questionIndexInCategory].question
             questionLabel.adjustsFontSizeToFitWidth = true
             
             // Fill money label with text
-            money = questionCategory![categoryIndex].questions[questionIndexInCategory].money
+            money = questionsCategory![questionIndex].category[questionIndexInCategory].money
             moneyLabel.text = String(money)
             
             // Take the correct answer number
-            correctAnswer = questionCategory![categoryIndex].questions[questionIndexInCategory].correctAnswer
+            correctAnswer = questionsCategory![questionIndex].category[questionIndexInCategory].correctAnswer
             
         } else {
             
@@ -247,7 +246,7 @@ class GameViewController: UIViewController {
                 opacityOfPhoneAFriendImage = 0.5
             }
             
-            questionsAmount = questionCategory!.count
+            questionsAmount = questions.count
             
             GameResults.shared.addRecord(correctAnswersAmount, questionsAmount, moneyAmount, percentOfCorrectAnswers, lifelinesCount, opacityOfHideTwoIncorrectAnswersImage, opacityOfAskTheAudienceImage, opacityOfPhoneAFriendImage)
             didEndGame(with: correctAnswersAmount)
@@ -279,7 +278,7 @@ class GameViewController: UIViewController {
         // Sum the lifelines
         lifelinesCount += 1
         
-        questionNumberStore = categoryIndex
+        questionNumberStore = questionIndex
     }
     
     // Lifeline: Ask the Audience
@@ -299,10 +298,10 @@ class GameViewController: UIViewController {
             
             for i in 0..<answerButtons.count {
                 if answerButtons[i].tag == correctAnswer && answerButtons[i].isEnabled != false {
-                    answerButtons[i].setTitle(letters[i] + questionCategory![categoryIndex].questions[questionIndexInCategory].answers[i] + ": " + String(closeToCorrect) + "%", for:  UIControl.State.normal)
+                    answerButtons[i].setTitle(letters[i] + questionsCategory![questionIndex].category[questionIndexInCategory].answers[i] + ": " + String(closeToCorrect) + "%", for:  UIControl.State.normal)
                 }
                 if answerButtons[i].tag != correctAnswer && answerButtons[i].isEnabled != false {
-                    answerButtons[i].setTitle(letters[i] + questionCategory![categoryIndex].questions[questionIndexInCategory].answers[i] + ": " + String(mayNotCloseToCorrect) + "%", for:  UIControl.State.normal)
+                    answerButtons[i].setTitle(letters[i] + questionsCategory![questionIndex].category[questionIndexInCategory].answers[i] + ": " + String(mayNotCloseToCorrect) + "%", for:  UIControl.State.normal)
                 }
             }
             
@@ -331,10 +330,10 @@ class GameViewController: UIViewController {
             // For All Other 3 Buttons we randomly set percents
             for i in 0..<answerButtons.count {
                 if answerButtons[i].tag == correctAnswer {
-                    answerButtons[i].setTitle(letters[i] + questionCategory![categoryIndex].questions[questionIndexInCategory].answers[i] + ": " + String(closeToCorrect) + "%", for:  UIControl.State.normal)
+                    answerButtons[i].setTitle(letters[i] + questionsCategory![questionIndex].category[questionIndexInCategory].answers[i] + ": " + String(closeToCorrect) + "%", for:  UIControl.State.normal)
                 } else {
                     guard let randomElement = arrayOfIncorrectOptions.randomElement() else { return }
-                    answerButtons[i].setTitle(letters[i] + questionCategory![categoryIndex].questions[questionIndexInCategory].answers[i] + ": " + String(randomElement) + "%", for:  UIControl.State.normal)
+                    answerButtons[i].setTitle(letters[i] + questionsCategory![questionIndex].category[questionIndexInCategory].answers[i] + ": " + String(randomElement) + "%", for:  UIControl.State.normal)
                     guard let firstIndex = arrayOfIncorrectOptions.firstIndex(of: randomElement) else { return }
                     arrayOfIncorrectOptions.remove(at: firstIndex)
                 }
@@ -350,7 +349,7 @@ class GameViewController: UIViewController {
         // Sum the lifelines count
         lifelinesCount += 1
         
-        questionNumberStore = categoryIndex
+        questionNumberStore = questionIndex
     }
     
     // Lifeline: Phone A Friend
@@ -379,7 +378,7 @@ class GameViewController: UIViewController {
         }
         
         // If the User already use one of the lifelines at the same question we increase the chance to highlight the correct answer
-        if askAudienceButton.isEnabled == false && questionNumberStore == categoryIndex || hideTwoIncorrectAnswersButton.isEnabled == false && questionNumberStore == categoryIndex {
+        if askAudienceButton.isEnabled == false && questionNumberStore == questionIndex || hideTwoIncorrectAnswersButton.isEnabled == false && questionNumberStore == questionIndex {
             let randomNumber = Int.random(in: 1...100)
             if randomNumber <= 80 || odds >= 50 {
                 changeButtonColor()
@@ -403,15 +402,15 @@ class GameViewController: UIViewController {
     // Checking the answer - is it correct or not
     @IBAction func chooseAnswer(_ sender: UIButton) {
         if ((sender as UIButton).tag == correctAnswer) {
-            categoryIndex += 1
+            questionIndex += 1
             correctAnswersAmount += 1
-            questionsAmount = questionCategory!.count
+            questionsAmount = questions.count
             percentOfCorrectAnswers = Int((Double(correctAnswersAmount) / Double(questionsAmount)) * 100)
             moneyAmount = moneyAmount + money
             loadNewQuestion()
         } else {
-            categoryIndex += 1
-            questionsAmount = questionCategory!.count
+            questionIndex += 1
+            questionsAmount = questions.count
             percentOfCorrectAnswers = Int((Double(correctAnswersAmount) / Double(questionsAmount)) * 100)
             
             if hideTwoIncorrectAnswersButton.isEnabled == false {
