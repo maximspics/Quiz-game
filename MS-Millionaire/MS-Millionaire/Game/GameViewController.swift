@@ -7,12 +7,6 @@
 //
 
 import UIKit
-import SpriteKit
-import GameplayKit
-
-protocol GameSceneDelegate: class {
-    func didEndGame(with result: Int)
-}
 
 class GameViewController: UIViewController {
     
@@ -30,14 +24,12 @@ class GameViewController: UIViewController {
     var lifelineOdds: LifelineOdds = .medium
     var onGameEnd: ((Int) -> Void)?
     
-    var questions = [QuestionCategory]()
     var userQuestions = GameResults.shared.userQuestions
     let letters = ["A: ", "B: ", "C: ", "D: "]
     var categoryIndex = Int()
     var questionIndexInCategory = Int()
     var correctAnswer = Int()
     
-    var questionsAmount = Int()
     var correctAnswersAmount = Int()
     var money = Int()
     var moneyAmount = Int()
@@ -56,7 +48,7 @@ class GameViewController: UIViewController {
     var opacityOfAskTheAudienceImage: Float = 1.0
     var opacityOfPhoneAFriendImage: Float = 1.0
     
-    var questionNumberStore = Int()
+    var storedCategoryIndex = Int()
     
     let networkDataFetcher = NetworkDataFetcher()
     var questionCategory: [QuestionCategory]? = nil
@@ -66,108 +58,22 @@ class GameViewController: UIViewController {
         
         let urlString = "https://raw.githubusercontent.com/maximspics/Quiz-game/master/MS-Millionaire/MS-Millionaire/questions.json"
         
-        networkDataFetcher.fetchQuestions(urlString: urlString) { [weak self] (questionsCategory) in
+        networkDataFetcher.fetchQuestions(urlString: urlString) { (questionsCategory) in
             guard let questionsCategory = questionsCategory else { return }
-            self?.questionCategory = questionsCategory
-            
-            self?.loadStrategy()
-            self?.loadNewQuestion()
-            print("questionsCategory:", questionsCategory)
-            questionsCategory.map { c in
-                c.questions.map { q in
-                    print(q.answers)
-                }
-            }
+            self.questionCategory = questionsCategory
+            self.loadStrategy()
+            self.createViews()
+            self.loadQuestion()
         }
-        
-        
-        
+    }
+    
+    func createViews() {
         for button in answerButtons {
             button.createAnswerButton()
         }
         
         moneyView.createMoneyView()
         questionView.createQuestionView()
-        
-        
-        questions = [
-            QuestionCategory(questions: [
-                Question(question: "Каким термином определяют троих людей связанных любовными отношениями?",
-                         answers: ["Порочный круг",
-                                   "Любовный треугольник",
-                                   "Бермудский треугольник",
-                                   "Любовное троеборье"],
-                         correctAnswer: 1,
-                         money: 100),
-                Question(question: "Как правильно закончить пословицу: «Не откладывай на завтра то, что можешь сделать...»?",
-                         answers: ["Сейчас",
-                                   "Сегодня",
-                                   "Послезавтра",
-                                   "Никогда"],
-                         correctAnswer: 1,
-                         money: 100),
-                Question(question: "О чем предлагалось не думать свысока в песне из сериала «Семнадцать мгновений весны»?",
-                         answers: ["О секундах",
-                                   "О моментах",
-                                   "О минутах",
-                                   "О веках"],
-                         correctAnswer: 0,
-                         money: 100)
-                ]
-            ),
-            QuestionCategory(questions: [
-                Question(question: "Что вылетает из праздничной хлопушки?",
-                         answers: ["Брызги",
-                                   "Мишура",
-                                   "Пробка",
-                                   "Конфетти"],
-                         correctAnswer: 3,
-                         money: 200),
-                Question(question: "Какой туман кажется В.Добрынину похожим на обман в одной из его песен?",
-                         answers: ["Синий",
-                                   "Сиреневый",
-                                   "Утренний",
-                                   "Жетлый"],
-                         correctAnswer: 0,
-                         money: 200),
-                Question(question: "Как правильно продолжить припев детской песни: «Тили-тили...»?",
-                         answers: ["Хали-гали",
-                                   "Трали-вали",
-                                   "Жили-были",
-                                   "Ели-пили"],
-                         correctAnswer: 1,
-                         money: 200)
-            ]),
-            QuestionCategory(questions: [
-                Question(question: "Как называется экзотическое животное из Южной Америки?",
-                         answers: ["Пчеложор", "Термитоглот", "Муравьед", "Комаролов"],
-                         correctAnswer: 2,
-                         money: 300)
-            ]),
-            QuestionCategory(questions: [
-                Question(question: "Во что превращается гусеница?",
-                         answers: ["В мячик", "В пирамидку", "В машинку", "В куколку"],
-                         correctAnswer: 3,
-                         money: 400)
-            ]),
-            QuestionCategory(questions: [
-                Question(question: "К какой группе музыкальных инструментов относится валторна?",
-                         answers: ["Струнные", "Клавишные", "Ударные", "Духовые"],
-                         correctAnswer: 3,
-                         money: 500
-                )
-            ]),
-            QuestionCategory(questions: [
-                Question(question: "В какой басне Крылова среди действующих лиц есть человек?",
-                         answers: ["«Лягушка и Вол»", "«Свинья под Дубом»", "«Осел и Соловей»", "«Волк на псарне»"],
-                         correctAnswer: 3,
-                         money: 1000
-                )
-            ])
-        ]
-        
-        
-        loadNewQuestion()
     }
     
     func loadStrategy() {
@@ -192,15 +98,15 @@ class GameViewController: UIViewController {
         }
         
         odds = lifelineStrategy.doOdds()
-        print("odds in viewDidLoad: \(odds)")
+        print("odds: \(odds)")
         
         questionCategory = strategy.shuffleVariationOfQuestions(questionCategory!)
 
     }
     
-    func loadNewQuestion() {
+    func loadQuestion() {
         print(questionCategory?.count ?? 0)
-        if categoryIndex < questionCategory?.count ?? 1 {
+        if categoryIndex < questionCategory!.count {
             
             // Return the buttons to their original appearance if a lifelines was taken
             for i in 0..<answerButtons.count {
@@ -215,11 +121,9 @@ class GameViewController: UIViewController {
                 answersArray.append(i)
             }
             
-            // Take the random element in the same money category of question
-        //    guard let randomElement = questions[questionIndex].category.randomElement() else { return}
-        //    questionIndexInCategory = questions[questionIndex].category.firstIndex(of: randomElement)!
+            // Take the random question in category
             guard let randomElement = questionCategory?[categoryIndex].questions.randomElement() else { return}
-            questionIndexInCategory = (questionCategory?[categoryIndex].questions.firstIndex(of: randomElement))!
+            questionIndexInCategory = questionCategory![categoryIndex].questions.firstIndex(of: randomElement)!
             
             // Fill answer buttons with text
             for i in 0..<answerButtons.count {
@@ -239,20 +143,7 @@ class GameViewController: UIViewController {
             
         } else {
             
-            if hideTwoIncorrectAnswersButton.isEnabled == false {
-                opacityOfHideTwoIncorrectAnswersImage = 0.5
-            }
-            if askAudienceButton.isEnabled == false {
-                opacityOfAskTheAudienceImage = 0.5
-            }
-            if phoneAFriendButton.isEnabled == false {
-                opacityOfPhoneAFriendImage = 0.5
-            }
-            
-            questionsAmount = questionCategory!.count
-            
-            GameResults.shared.addRecord(correctAnswersAmount, questionsAmount, moneyAmount, percentOfCorrectAnswers, lifelinesCount, opacityOfHideTwoIncorrectAnswersImage, opacityOfAskTheAudienceImage, opacityOfPhoneAFriendImage)
-            didEndGame(with: correctAnswersAmount)
+            endGame()
         }
     }
     
@@ -281,7 +172,7 @@ class GameViewController: UIViewController {
         // Sum the lifelines
         lifelinesCount += 1
         
-        questionNumberStore = categoryIndex
+        storedCategoryIndex = categoryIndex
     }
     
     // Lifeline: Ask the Audience
@@ -352,7 +243,7 @@ class GameViewController: UIViewController {
         // Sum the lifelines count
         lifelinesCount += 1
         
-        questionNumberStore = categoryIndex
+        storedCategoryIndex = categoryIndex
     }
     
     // Lifeline: Phone A Friend
@@ -381,9 +272,9 @@ class GameViewController: UIViewController {
         }
         
         // If the User already use one of the lifelines at the same question we increase the chance to highlight the correct answer
-        if askAudienceButton.isEnabled == false && questionNumberStore == categoryIndex || hideTwoIncorrectAnswersButton.isEnabled == false && questionNumberStore == categoryIndex {
+        if askAudienceButton.isEnabled == false && storedCategoryIndex == categoryIndex || hideTwoIncorrectAnswersButton.isEnabled == false && storedCategoryIndex == categoryIndex {
             let randomNumber = Int.random(in: 1...100)
-            if randomNumber <= 80 || odds >= 50 {
+            if randomNumber <= 70 || odds >= randomNumber {
                 changeButtonColor()
             } else {
                 chooseBetweenCorrectAnswerAndAllAnswers()
@@ -407,34 +298,30 @@ class GameViewController: UIViewController {
         if ((sender as UIButton).tag == correctAnswer) {
             categoryIndex += 1
             correctAnswersAmount += 1
-            questionsAmount = questions.count
-            percentOfCorrectAnswers = Int((Double(correctAnswersAmount) / Double(questionsAmount)) * 100)
-            moneyAmount = moneyAmount + money
-            loadNewQuestion()
+            percentOfCorrectAnswers = Int((Double(correctAnswersAmount) / Double(questionCategory!.count)) * 100)
+            moneyAmount += money
+            loadQuestion()
         } else {
-            categoryIndex += 1
-            questionsAmount = questions.count
-            percentOfCorrectAnswers = Int((Double(correctAnswersAmount) / Double(questionsAmount)) * 100)
+            percentOfCorrectAnswers = Int((Double(correctAnswersAmount) / Double(questionCategory!.count)) * 100)
             
-            if hideTwoIncorrectAnswersButton.isEnabled == false {
-                opacityOfHideTwoIncorrectAnswersImage = 0.5
-            }
-            if askAudienceButton.isEnabled == false {
-                opacityOfAskTheAudienceImage = 0.5
-            }
-            if phoneAFriendButton.isEnabled == false {
-                opacityOfPhoneAFriendImage = 0.5
-            }
-            
-            GameResults.shared.addRecord(correctAnswersAmount, questionsAmount, moneyAmount, percentOfCorrectAnswers, lifelinesCount, opacityOfHideTwoIncorrectAnswersImage, opacityOfAskTheAudienceImage, opacityOfPhoneAFriendImage)
-            didEndGame(with: correctAnswersAmount)
+            endGame()
         }
     }
-}
-
-extension GameViewController: GameSceneDelegate {
-    func didEndGame(with result: Int) {
-        self.onGameEnd?(result)
-        self.dismiss(animated: true, completion: nil)
+    
+    func endGame() {
+        if hideTwoIncorrectAnswersButton.isEnabled == false {
+            opacityOfHideTwoIncorrectAnswersImage = 0.5
+        }
+        if askAudienceButton.isEnabled == false {
+            opacityOfAskTheAudienceImage = 0.5
+        }
+        if phoneAFriendButton.isEnabled == false {
+            opacityOfPhoneAFriendImage = 0.5
+        }
+        
+        GameResults.shared.addRecord(correctAnswersAmount, questionCategory!.count, moneyAmount, percentOfCorrectAnswers, lifelinesCount, opacityOfHideTwoIncorrectAnswersImage, opacityOfAskTheAudienceImage, opacityOfPhoneAFriendImage)
+        
+        onGameEnd?(correctAnswersAmount)
+        dismiss(animated: true, completion: nil)
     }
 }

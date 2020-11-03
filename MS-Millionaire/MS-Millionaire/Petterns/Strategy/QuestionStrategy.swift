@@ -9,6 +9,7 @@
 import Foundation
 
 protocol QuestionStrategy {
+    
     func shuffleVariationOfQuestions(_ questions: [QuestionCategory]) -> [QuestionCategory]
 }
 

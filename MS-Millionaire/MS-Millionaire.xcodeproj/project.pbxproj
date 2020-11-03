@@ -78,10 +78,10 @@
 			children = (
 				2A6077552405FBE100BFE110 /* Difficulty.swift */,
 				2A5E2B2B241062BB007B558F /* LifelineOdds.swift */,
+				2A5E2B3324106E45007B558F /* OddsStrategy.swift */,
 				2A60775D2407D2BD00BFE110 /* QuestionStrategy.swift */,
 				2A60775F2407D36600BFE110 /* SequenceQuestionStrategy.swift */,
 				2A6077612407D46400BFE110 /* RandomQuestionStrategy.swift */,
-				2A5E2B3324106E45007B558F /* OddsStrategy.swift */,
 			);
 			path = Strategy;
 			sourceTree = "<group>";
@@ -126,9 +126,9 @@
 				2A684E4223FB21EE00A6CFD9 /* MainMenuViewController.swift */,
 				2A684E4623FB396D00A6CFD9 /* GameViewController.swift */,
 				2A684E4823FB3EBD00A6CFD9 /* ResultsViewController.swift */,
-				2A684E4C23FBE03300A6CFD9 /* UIButton+UILabel+UIView+UITableViewCell+Extention.swift */,
 				2A2EB6322400A20B0087B45F /* RecordCell.swift */,
 				2A607765240C77E500BFE110 /* AddQuestion.swift */,
+				2A684E4C23FBE03300A6CFD9 /* UIButton+UILabel+UIView+UITableViewCell+Extention.swift */,
 			);
 			path = Game;
 			sourceTree = "<group>";

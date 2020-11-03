@@ -53,7 +53,6 @@ class MainMenuViewController: UIViewController {
             destination.onGameEnd = { [weak self] result in
                 self?.lastResultLabel.text = "Последний результат: \(result)"
                 self?.lastResultLabel.createMainMenuLabel()
-                
                 try! self?.caretaker.saveGame(GameResults.shared.records)
             }
             break

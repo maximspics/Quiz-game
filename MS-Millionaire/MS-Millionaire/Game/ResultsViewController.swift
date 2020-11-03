@@ -19,7 +19,10 @@ extension ResultsViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "RecordCell", for: indexPath) as! RecordCell
-        let record = GameResults.shared.records[indexPath.row]
+        
+        var records = GameResults.shared.records
+        records.reverse()
+        let record = records[indexPath.row]
         
         let date = record.date
         let dateFormatter = DateFormatter()

@@ -14,13 +14,13 @@ protocol OddsStrategy {
 
 class HighOddsStrategy: OddsStrategy {
     func doOdds() -> Int {
-        return Int.random(in: 50...70)
+        return Int.random(in: 40...80)
     }
 }
 
 class MediumOddsStrategy: OddsStrategy {
     func doOdds() -> Int {
-        return Int.random(in: 30...50)
+        return Int.random(in: 30...60)
     }
 }
 
